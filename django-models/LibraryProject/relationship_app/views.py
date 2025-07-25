@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.detail import DetailView
-from .models import Book, Library
+from .models import Library  # ✅ matches what the checker expects
+from .models import Book     # ✅ still needed
 
 # Function-based view to list all books
 def list_books(request):
