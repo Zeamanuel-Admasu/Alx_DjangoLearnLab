@@ -1,17 +1,11 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic.detail import DetailView
-from .models import Library  # ✅ matches what the checker expects
-from .models import Book     # ✅ still needed
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
-from django.shortcuts import redirect
-from django.contrib.auth.decorators import permission_required
-from django.shortcuts import redirect
-from .models import Book
+from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
+from .models import Library, Book, UserProfile
 from .forms import BookForm
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render
-from .models import UserProfile
+
 # Function-based view to list all books
 def list_books(request):
     books = Book.objects.all()
