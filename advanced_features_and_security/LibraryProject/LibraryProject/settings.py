@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-(1*8#xaz+p0(i4n948w#5kbsuewl%g^-+1vo!%=-6_bb)6%pfj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']  # Add your production domain here
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']  # Update with your domain in production
 
 
 # Application definition
@@ -96,12 +96,11 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# Static files
 STATIC_URL = 'static/'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 # Custom User Model
 AUTH_USER_MODEL = 'bookshelf.CustomUser'
@@ -116,16 +115,24 @@ LOGOUT_REDIRECT_URL = 'login'
 # SECURITY BEST PRACTICES
 # =========================
 
-# Security headers
+# --- HTTPS Redirection ---
+SECURE_SSL_REDIRECT = True  # Redirect all HTTP to HTTPS
+
+# --- HSTS (Strict Transport Security) ---
+SECURE_HSTS_SECONDS = 31536000  # Enforce HTTPS for 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# --- Secure Cookies ---
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# --- Secure Headers ---
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-# Secure cookies
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-
-# CSP Settings
+# --- Content Security Policy (CSP) ---
 CSP_DEFAULT_SRC = ("'self'",)
 CSP_SCRIPT_SRC = ("'self'",)
 CSP_STYLE_SRC = ("'self'",)
