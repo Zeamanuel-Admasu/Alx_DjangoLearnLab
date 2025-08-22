@@ -133,10 +133,11 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.FormParser",
         "rest_framework.parsers.MultiPartParser",
     ],
-    # Optional: enable Session & Basic auth for quick manual tests
+    # Ensure a challenge is issued for unauthenticated requests
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
-    # We keep per-view permission classes as configured above.
+    # Do NOT set DEFAULT_PERMISSION_CLASSES to IsAuthenticatedOrReadOnly globally.
+    # Let views specify permissions, as you already do.
 }
