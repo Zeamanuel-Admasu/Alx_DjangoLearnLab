@@ -1,24 +1,46 @@
-# api/views.py
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, filters, exceptions
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated  # <-- required imports
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Book
 from .serializers import BookSerializer
-
+from .filters import BookFilter
 
 class BookListView(generics.ListAPIView):
     """
-    GET /books/ -> list all books
-    Supports basic search and ordering via query params.
+    GET /books/ -> list all books (public)
+
+    Supports:
+      - Filtering (django-filter):
+          ?title=fall
+          ?author=1
+          ?author_name=achebe
+          ?publication_year=1958
+          ?publication_year__gte=1950&publication_year__lte=1965
+      - Search (DRF SearchFilter):
+          ?search=achebe        (matches title or author name)
+      - Ordering (DRF OrderingFilter):
+          ?ordering=publication_year
+          ?ordering=-publication_year
+          ?ordering=title
+          ?ordering=-publication_year,title  (multi-field)
+
+    Notes:
+      - filterset_class centralizes our allowed filters and lookups.
+      - search_fields applies full-text-ish icontains to the listed fields.
+      - ordering_fields restricts which fields can be sorted on.
     """
     queryset = Book.objects.select_related("author").all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    # Filtering + search + ordering backends
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = BookFilter
     search_fields = ["title", "author__name"]
-    ordering_fields = ["publication_year", "title"]
-    ordering = ["title"]
+    ordering_fields = ["publication_year", "title", "id"]
+    ordering = ["title"]  # default
+
 
 
 class BookDetailView(generics.RetrieveAPIView):
