@@ -7,6 +7,26 @@ from rest_framework.response import Response
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 from .permissions import IsOwnerOrReadOnly
+from rest_framework.decorators import action
+
+class PostViewSet(viewsets.ModelViewSet):
+    # ... your existing code ...
+
+    @action(detail=False, methods=["get"], url_path="feed")
+    def feed(self, request):
+        """
+        GET /api/posts/feed/ -> posts authored by users current user follows,
+        newest first, paginated.
+        """
+        if not request.user.is_authenticated:
+            return Response({"detail": "Authentication credentials were not provided."}, status=401)
+
+        followed_users = request.user.following.all()
+        qs = Post.objects.filter(author__in=followed_users).select_related("author").order_by("-created_at")
+
+        page = self.paginate_queryset(qs)
+        ser = self.get_serializer(page or qs, many=True)
+        return self.get_paginated_response(ser.data) if page is not None else Response(ser.data)
 
 
 class PostViewSet(viewsets.ModelViewSet):
