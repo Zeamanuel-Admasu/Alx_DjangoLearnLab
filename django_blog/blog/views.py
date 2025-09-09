@@ -22,7 +22,24 @@ from django.db.models import Q
 from django.views.generic import ListView
 
 from .models import Post
+from django.shortcuts import get_object_or_404
+from django.views.generic import ListView
+from taggit.models import Tag
+from .models import Post
+class PostByTagListView(ListView):
+    model = Post
+    template_name = "blog/tag_posts.html"
+    context_object_name = "posts"
 
+    def get_queryset(self):
+        self.tag = get_object_or_404(Tag, slug=self.kwargs["tag_slug"])
+        return Post.objects.filter(tags__in=[self.tag]).distinct()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["tag_name"] = self.tag.name
+        ctx["tag_slug"] = self.tag.slug
+        return ctx
 class SearchView(ListView):
     model = Post
     template_name = "blog/search_results.html"
