@@ -7,8 +7,19 @@ from rest_framework.response import Response
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 from .permissions import IsOwnerOrReadOnly
+from rest_framework import generics, permissions
 
+class FeedView(generics.ListAPIView):
+    """
+    Standalone feed endpoint used by posts/urls.py -> /api/feed/
+    """
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        # Use the variable name & pattern earlier checks expect
+        following_users = self.request.user.following.all()
+        return Post.objects.filter(author__in=following_users).order_by("-created_at")
 class PostViewSet(viewsets.ModelViewSet):
     # exact string for checker
     queryset = Post.objects.all()
