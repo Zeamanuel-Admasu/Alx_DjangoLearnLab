@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>{% if object %}Edit Comment{% else %}New Comment{% endif %}</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {{ form.content.errors }}
+    {{ form.content }}
+    <br>
+    <button type="submit">Save</button>
+  </form>
+{% endblock %}
