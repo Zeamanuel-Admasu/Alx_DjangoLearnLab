@@ -5,11 +5,30 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from notifications.models import Notification
 
 from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer
 
 # Alias the active user model as "CustomUser" to satisfy the checker and keep things flexible
 CustomUser = get_user_model()
+
+@api_view(["POST"])
+def follow_user(request, user_id):
+    # ... your existing checks ...
+    target = CustomUser.objects.filter(pk=user_id).first()
+    if not target:
+        return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    request.user.following.add(target)
+
+    if target.id != request.user.id:
+        Notification.objects.create(
+            recipient=target,
+            actor=request.user,
+            verb="followed you",
+        )
+
+    return Response({"detail": f"You are now following {target.username}."}, status=status.HTTP_200_OK)
 
 
 # --- Example CBV using DRF generics & IsAuthenticated ---
