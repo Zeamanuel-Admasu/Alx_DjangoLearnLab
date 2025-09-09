@@ -1,12 +1,18 @@
+# blog/urls.py
 from django.urls import path
-from .views import (
-    BlogLoginView, BlogLogoutView, register, profile,
-    # (we’ll add post views later)
-)
+from . import views
+
 
 urlpatterns = [
-    path('login/',  BlogLoginView.as_view(), name='login'),
-    path('logout/', BlogLogoutView.as_view(), name='logout'),
-    path('register/', register, name='register'),
-    path('profile/',  profile, name='profile'),
+    # Home (from Task 0)
+    path("", views.home, name="post-list"),
+
+    # Auth
+    path("login/",  views.BlogLoginView.as_view(), name="login"),
+    path("logout/", views.BlogLogoutView.as_view(), name="logout"),
+    path("register/", views.register, name="register"),
+    path("profile/", views.profile, name="profile"),
+
+    # Temporary stub (remove/replace in Task 2)
+    path("posts/new/", views.post_create_stub, name="post-create"),
 ]

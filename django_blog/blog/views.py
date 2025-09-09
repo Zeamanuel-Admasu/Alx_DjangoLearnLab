@@ -1,33 +1,41 @@
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .forms import SignUpForm, ProfileForm
 
+# --- Auth ---
+
 class BlogLoginView(LoginView):
-    template_name = 'blog/login.html'
+    template_name = "blog/login.html"  # expects a 'form' in template
 
 class BlogLogoutView(LogoutView):
-    next_page = 'post-list'
+    next_page = "post-list"
 
 def register(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('post-list')
+            return redirect("post-list")
     else:
         form = SignUpForm()
-    return render(request, 'blog/register.html', {'form': form})
+    return render(request, "blog/register.html", {"form": form})
 
 @login_required
 def profile(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = ProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('profile')
+            return redirect("profile")
     else:
         form = ProfileForm(instance=request.user)
-    return render(request, 'blog/profile.html', {'form': form})
+    return render(request, "blog/profile.html", {"form": form})
+
+# --- Temporary stub so base.html can link to 'post-create' without errors ---
+@login_required
+def post_create_stub(request):
+    return HttpResponse("Post create coming in Task 2.")
