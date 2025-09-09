@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Search Results{% if query %} for “{{ query }}”{% endif %}</h2>
+
+  {% if posts %}
+    <ul>
+      {% for p in posts %}
+        <li>
+          <a href="{% url 'post-detail' p.pk %}">{{ p.title }}</a>
+          <small>by {{ p.author.username }} • {{ p.published_date }}</small>
+          {% if p.tags.all %}
+            — {% for t in p.tags.all %}
+                <a href="{% url 'tag-posts' t.name %}">#{{ t.name }}</a>{% if not forloop.last %}, {% endif %}
+              {% endfor %}
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No posts matched your search.</p>
+  {% endif %}
+{% endblock %}

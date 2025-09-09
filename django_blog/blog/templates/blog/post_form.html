@@ -4,16 +4,29 @@
   <form method="post">
     {% csrf_token %}
     {{ form.non_field_errors }}
+
     <div>
       <label>Title</label>
       {{ form.title }}
       {{ form.title.errors }}
     </div>
+
+    {# If Task 4 is enabled, PostForm includes tags #}
+    {% if form.tags %}
+    <div>
+      <label>Tags</label>
+      {{ form.tags }}
+      {{ form.tags.errors }}
+      <small>Comma-separated (e.g. django, web, tutorial)</small>
+    </div>
+    {% endif %}
+
     <div>
       <label>Content</label>
       {{ form.content }}
       {{ form.content.errors }}
     </div>
+
     <button type="submit">Save</button>
   </form>
   <p><a href="{% url 'post-list' %}">Cancel</a></p>

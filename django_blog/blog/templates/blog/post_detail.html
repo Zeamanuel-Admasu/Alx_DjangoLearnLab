@@ -11,6 +11,16 @@
     </p>
   {% endif %}
 
+  {# If you finished Task 4 (tags), show tags here #}
+  {% if object.tags.all %}
+    <p>
+      <strong>Tags:</strong>
+      {% for t in object.tags.all %}
+        <a href="{% url 'tag-posts' t.name %}">#{{ t.name }}</a>{% if not forloop.last %}, {% endif %}
+      {% endfor %}
+    </p>
+  {% endif %}
+
   <hr>
   <h3>Comments</h3>
 

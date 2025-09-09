@@ -18,7 +18,10 @@ class ProfileForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ("title", "content")
+        fields = ("title", "content", "tags")
+        widgets = {
+            "tags": forms.TextInput(attrs={"placeholder": "e.g. django, web, tutorial"}),
+        }
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment

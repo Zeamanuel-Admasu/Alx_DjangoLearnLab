@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Posts tagged “{{ tag_name }}”</h2>
+
+  {% if posts %}
+    <ul>
+      {% for p in posts %}
+        <li>
+          <a href="{% url 'post-detail' p.pk %}">{{ p.title }}</a>
+          <small>by {{ p.author.username }} • {{ p.published_date }}</small>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No posts with this tag yet.</p>
+  {% endif %}
+
+  <p><a href="{% url 'post-list' %}">← Back to posts</a></p>
+{% endblock %}

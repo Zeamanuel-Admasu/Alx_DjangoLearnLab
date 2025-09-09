@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "blog",
+    "taggit",
     # Add 'taggit' later when you reach the tagging task (after `pip install django-taggit`)
     # "taggit",
 ]

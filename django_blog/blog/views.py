@@ -18,6 +18,49 @@ from django.views.generic import CreateView, UpdateView, DeleteView
 from .models import Post, Comment
 from .forms import CommentForm
 from .forms import CommentForm
+from django.db.models import Q
+from django.views.generic import ListView
+
+from .models import Post
+
+class SearchView(ListView):
+    model = Post
+    template_name = "blog/search_results.html"
+    context_object_name = "posts"
+
+    def get_queryset(self):
+        q = self.request.GET.get("q", "").strip()
+        if not q:
+            return Post.objects.none()
+        return (
+            Post.objects.filter(
+                Q(title__icontains=q) |
+                Q(content__icontains=q) |
+                Q(tags__name__icontains=q)
+            )
+            .distinct()
+        )
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["query"] = self.request.GET.get("q", "")
+        return ctx
+
+class TagListView(ListView):
+    model = Post
+    template_name = "blog/tag_posts.html"
+    context_object_name = "posts"
+
+    def get_queryset(self):
+        tag_name = self.kwargs["tag_name"]
+        # iexact = case-insensitive exact match on tag name
+        return Post.objects.filter(tags__name__iexact=tag_name).distinct()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["tag_name"] = self.kwargs["tag_name"]
+        return ctx
+
 
 class PostDetailView(DetailView):
     model = Post
